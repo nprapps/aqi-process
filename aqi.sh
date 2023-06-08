@@ -20,13 +20,13 @@ mv temp.dat working.dat
 in2csv -I -d "|" -f csv working.dat > aqi.csv
 
 # trim out extra columns and filter to only primary data rows
-csvcut -C "Issue date","Latitude","Longitude","Action day","Discussion" aqi.csv | csvgrep -c "Primary" -m "Y" > temp.csv
+csvcut -C "Issue date","Latitude","Longitude","Action day","Discussion","Forecast","Source" aqi.csv | csvgrep -c "Primary" -m "Y" > temp.csv
 rm aqi.csv
 mv temp.csv aqi.csv
 
 # dump it into a squlite database and filter only the cities we're interested in
 csvsql --db sqlite:///aqi.db --insert --overwrite aqi.csv
-csvsql --query "select * from aqi where (\"Reporting area\" = \"Metropolitan Washington\") OR (\"Reporting area\" = \"New York City Region\") OR (\"Reporting area\" = \"Philadelphia\") OR (\"Reporting area\" = \"Boston\") OR (\"Reporting area\" = \"Chicago\") OR (\"Reporting area\" = \"Pittsburgh\") OR (\"Reporting area\" = \"Metro Baltimore\") OR (\"Reporting area\" = \"Detroit\");" aqi.csv > filtered.csv
+csvsql -I --query "select * from aqi where (\"Reporting area\" = \"Metropolitan Washington\") OR (\"Reporting area\" = \"New York City Region\") OR (\"Reporting area\" = \"Philadelphia\") OR (\"Reporting area\" = \"Boston\") OR (\"Reporting area\" = \"Chicago\") OR (\"Reporting area\" = \"Pittsburgh\") OR (\"Reporting area\" = \"Metro Baltimore\") OR (\"Reporting area\" = \"Detroit\");" aqi.csv > filtered.csv
 csvjson filtered.csv > filtered.json
 
 # copy the data over to a dngext graphic
