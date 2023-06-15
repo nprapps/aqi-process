@@ -2,3 +2,4 @@
 *.db
 reportingarea.dat
 working.dat
+*.code-workspace
